@@ -52,32 +52,10 @@ export default function VehicleDetailsView({ vehicleId, vehicles, setView, onAdd
     name: '',
     email: '',
     phone: '',
-    message: `I would like to request a private showing for the ${vehicle.make} ${vehicle.model} (${vehicle.year} Model). Please coordinate an appointment.`,
+    message: `I am interested in vehicle ${vehicle.make} ${vehicle.model} ${vehicle.year} ${vehicle.price}`,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-
-  // High-performance specifications based on make for realistic luxury feels
-  const getSpecs = (make: string) => {
-    switch (make) {
-      case 'Lamborghini':
-        return { acceleration: '2.8s', topSpeed: '355 km/h', drivetrain: 'AWD', color: 'Verde Mantis / Grigio Acheso', displacement: '6.5L Naturally Aspirated V12' };
-      case 'Rolls-Royce':
-        return { acceleration: '4.8s', topSpeed: '250 km/h', drivetrain: 'RWD', color: 'Tempest Grey / Black Diamond', displacement: '6.75L Twin-Turbocharged V12' };
-      case 'Porsche':
-        return { acceleration: '3.2s', topSpeed: '296 km/h', drivetrain: 'RWD', color: 'Python Green / White Weissach', displacement: '4.0L High-Revving Boxer-6' };
-      case 'Ferrari':
-        return { acceleration: '2.5s', topSpeed: '340 km/h', drivetrain: 'AWD', color: 'Rosso Corsa / Grigio Titanio', displacement: '4.0L Twin-Turbo V8 Hybrid' };
-      case 'Aston Martin':
-        return { acceleration: '3.4s', topSpeed: '340 km/h', drivetrain: 'RWD', color: 'Silver Birch / Xenon Grey', displacement: '5.2L Twin-Turbocharged V12' };
-      case 'Bentley':
-        return { acceleration: '3.6s', topSpeed: '335 km/h', drivetrain: 'AWD', color: 'British Racing Green / Cumbrian', displacement: '6.0L Twin-Turbocharged W12' };
-      default:
-        return { acceleration: '3.5s', topSpeed: '310 km/h', drivetrain: 'AWD', color: 'Bespoke Satin Carbon Metallic', displacement: 'Twin-Turbocharged System' };
-    }
-  };
-
-  const specs = getSpecs(vehicle.make);
 
   const formatPrice = (price: number) => {
     return formatCurrency(price || 0);
@@ -230,13 +208,11 @@ export default function VehicleDetailsView({ vehicleId, vehicles, setView, onAdd
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-[16px]" id="specs-grid">
                 {[
-                  { label: 'Engine', value: specs.displacement },
+                  { label: 'Make', value: vehicle.make },
+                  { label: 'Model', value: vehicle.model },
+                  { label: 'Year', value: vehicle.year },
                   { label: 'Transmission', value: vehicle.transmission },
-                  { label: 'Drive Type', value: specs.drivetrain },
-                  { label: 'Propulsion system', value: vehicle.fuel_type },
-                  { label: '0–100 km/h', value: specs.acceleration },
-                  { label: 'Top Speed', value: specs.topSpeed },
-                  { label: 'Exterior Color', value: specs.color },
+                  { label: 'Fuel Type', value: vehicle.fuel_type },
                   { label: 'Kilometers Driven', value: `${(vehicle.mileage || 0).toLocaleString()} KM` }
                 ].map((item, idx) => (
                   <div key={idx} className="flex justify-between py-2.5 border-b border-[#2A2A2A]/50" id={`spec-item-${idx}`}>
@@ -411,7 +387,7 @@ export default function VehicleDetailsView({ vehicleId, vehicles, setView, onAdd
                   <span>Call Now</span>
                 </a>
                 <a
-                  href="https://wa.me/919642096476?text=Hi%20Bharat%20Cars,%20I'm%20interested%20in%20this%20vehicle."
+                  href={`https://wa.me/919642096476?text=${encodeURIComponent(`Hi Bharat Cars, I am interested in vehicle ${vehicle.make} ${vehicle.model} ${vehicle.year} ${vehicle.price}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center space-x-2 py-3 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 rounded text-[14px] font-sans font-medium tracking-[0.15em] uppercase transition-all border border-emerald-500/30"

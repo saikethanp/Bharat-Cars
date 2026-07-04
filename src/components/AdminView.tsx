@@ -29,7 +29,8 @@ import {
   Calendar, 
   Layers, 
   ExternalLink,
-  Upload
+  Upload,
+  Pencil
 } from 'lucide-react';
 import { Vehicle, Enquiry, GalleryItem } from '../types';
 
@@ -40,6 +41,7 @@ interface AdminViewProps {
   enquiries: Enquiry[];
   gallery: GalleryItem[];
   onAddVehicle: (vehicle: Omit<Vehicle, 'id' | 'created_at'>) => void;
+  onUpdateVehicle: (id: string, vehicle: Omit<Vehicle, 'id' | 'created_at'>) => void;
   onDeleteVehicle: (id: string) => void;
   onAddGalleryItem: (galleryItem: Omit<GalleryItem, 'id' | 'created_at'>) => void;
   onDeleteGalleryItem: (id: string) => void;
@@ -55,6 +57,7 @@ export default function AdminView({
   enquiries,
   gallery,
   onAddVehicle,
+  onUpdateVehicle,
   onDeleteVehicle,
   onAddGalleryItem,
   onDeleteGalleryItem,
@@ -105,6 +108,7 @@ export default function AdminView({
     description: '',
   });
 
+  const [editingVehicleId, setEditingVehicleId] = useState<string | null>(null);
   const [vehicleSuccess, setVehicleSuccess] = useState(false);
   const [gallerySuccess, setGallerySuccess] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
@@ -165,7 +169,7 @@ export default function AdminView({
       images.push('https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=1200&auto=format&fit=crop');
     }
 
-    onAddVehicle({
+    const vehicleData = {
       make: newCar.make,
       model: newCar.model,
       year: Number(newCar.year),
@@ -175,7 +179,13 @@ export default function AdminView({
       fuel_type: newCar.fuel_type,
       description: newCar.description,
       images: images,
-    });
+    };
+
+    if (editingVehicleId) {
+      onUpdateVehicle(editingVehicleId, vehicleData);
+    } else {
+      onAddVehicle(vehicleData);
+    }
 
     setVehicleSuccess(true);
     setNewCar({
@@ -194,6 +204,7 @@ export default function AdminView({
     setSupportingImages([]);
     setCoverUrlInput('');
     setSupportingUrlInput('');
+    setEditingVehicleId(null);
 
     setTimeout(() => {
       setVehicleSuccess(false);
@@ -435,11 +446,40 @@ export default function AdminView({
                                 {formatCurrency(car.price || 0)}
                               </td>
 
-                              {/* Quick Action Delete */}
-                              <td className="py-4 px-5 text-right">
+                              {/* Quick Action Edit/Delete */}
+                              <td className="py-4 px-5 text-right space-x-2">
+                                <button
+                                  onClick={() => {
+                                    setEditingVehicleId(car.id);
+                                    setNewCar({
+                                      make: car.make,
+                                      model: car.model,
+                                      year: car.year,
+                                      price: car.price,
+                                      mileage: car.mileage || 0,
+                                      transmission: car.transmission,
+                                      fuel_type: car.fuel_type,
+                                      description: car.description || '',
+                                      imageUrl1: '',
+                                      imageUrl2: '',
+                                    });
+                                    if (car.images && car.images.length > 0) {
+                                      setCoverImage(car.images[0]);
+                                      setSupportingImages(car.images.slice(1));
+                                    } else {
+                                      setCoverImage('');
+                                      setSupportingImages([]);
+                                    }
+                                    setActiveTab('add-vehicle');
+                                  }}
+                                  className="p-2 bg-blue-500/5 hover:bg-blue-500 text-blue-400 hover:text-white border border-blue-500/10 hover:border-transparent rounded transition-all cursor-pointer inline-flex"
+                                  title="Edit"
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                </button>
                                 <button
                                   onClick={() => onDeleteVehicle(car.id)}
-                                  className="p-2 bg-rose-500/5 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/10 hover:border-transparent rounded transition-all cursor-pointer"
+                                  className="p-2 bg-rose-500/5 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/10 hover:border-transparent rounded transition-all cursor-pointer inline-flex"
                                   id={`delete-car-btn-${car.id}`}
                                   title="Delete"
                                 >
@@ -470,8 +510,8 @@ export default function AdminView({
                   className="max-w-3xl mx-auto space-y-6"
                 >
                   <div className="border-b border-[#2A2A2A] pb-4">
-                    <h3 className="text-[28px] font-serif font-semibold text-white uppercase tracking-wider">Add New Vehicle</h3>
-                    <p className="text-[14px] font-sans font-normal text-[#BDBDBD] leading-[1.7] font-normal mt-0.5">Fill in the vehicle details below to add a new vehicle to your website inventory.</p>
+                    <h3 className="text-[28px] font-serif font-semibold text-white uppercase tracking-wider">{editingVehicleId ? 'Edit Vehicle' : 'Add New Vehicle'}</h3>
+                    <p className="text-[14px] font-sans font-normal text-[#BDBDBD] leading-[1.7] font-normal mt-0.5">Fill in the vehicle details below to {editingVehicleId ? 'update' : 'add'} a vehicle in your website inventory.</p>
                   </div>
 
                   {vehicleSuccess && (
@@ -481,7 +521,7 @@ export default function AdminView({
                       className="bg-red-500/10 border border-red-500/30 p-4 rounded text-center text-red-500 text-[13px] font-sans font-medium tracking-[0.15em] uppercase tracking-[0.15em]"
                       id="car-success-notification"
                     >
-                      Vehicle added successfully.
+                      Vehicle {editingVehicleId ? 'updated' : 'added'} successfully.
                     </motion.div>
                   )}
 
@@ -833,6 +873,7 @@ export default function AdminView({
                           setNewCar({ make: '', model: '', year: new Date().getFullYear(), price: '', description: '', transmission: 'Automatic', fuel_type: 'Petrol', mileage: 0, image_url: '' });
                           setCoverImage('');
                           setSupportingImages([]);
+                          setEditingVehicleId(null);
                         }}
                         className="flex-1 py-4 bg-transparent hover:bg-white/5 border border-[#2A2A2A] text-white font-sans font-semibold text-[16px] rounded tracking-[0.15em] uppercase transition-all duration-300 flex items-center justify-center cursor-pointer"
                       >
@@ -844,7 +885,7 @@ export default function AdminView({
                         id="car-submit-btn"
                       >
                         <Sparkles className="h-4 w-4" />
-                        <span>Save Vehicle</span>
+                        <span>{editingVehicleId ? 'Save Changes' : 'Save Vehicle'}</span>
                       </button>
                     </div>
                   </form>

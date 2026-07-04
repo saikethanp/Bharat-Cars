@@ -266,6 +266,56 @@ export default function App() {
     }
   };
 
+  const handleUpdateVehicle = async (id: string, updatedCar: Omit<Vehicle, 'id' | 'created_at'>) => {
+    if (!supabase) return;
+
+    const { error: updateError } = await supabase.from('vehicles').update({
+      make: updatedCar.make,
+      model: updatedCar.model,
+      year: updatedCar.year,
+      price: updatedCar.price,
+      mileage: updatedCar.mileage,
+      transmission: updatedCar.transmission,
+      fuel_type: updatedCar.fuel_type,
+      description: updatedCar.description,
+    }).eq('id', id);
+
+    if (updateError) {
+      console.error("Failed to update vehicle", updateError);
+      return;
+    }
+
+    if (updatedCar.images && updatedCar.images.length > 0) {
+      await supabase.from('vehicle_gallery').delete().eq('vehicle_id', id);
+      const galleryInserts = updatedCar.images.map((url, index) => ({
+        vehicle_id: id,
+        image_url: url,
+        is_primary: index === 0,
+        sort_order: index
+      }));
+      await supabase.from('vehicle_gallery').insert(galleryInserts);
+    }
+
+    await logActivity('update', 'vehicle', id, { make: updatedCar.make, model: updatedCar.model });
+
+    setVehicles((prev) => prev.map(v => 
+      v.id === id 
+        ? { 
+            ...v, 
+            make: updatedCar.make,
+            model: updatedCar.model,
+            year: updatedCar.year,
+            price: updatedCar.price,
+            mileage: updatedCar.mileage,
+            transmission: updatedCar.transmission,
+            fuel_type: updatedCar.fuel_type,
+            description: updatedCar.description,
+            images: updatedCar.images || v.images
+          }
+        : v
+    ));
+  };
+
   // Vehicle deletion callback
   const handleDeleteVehicle = async (id: string) => {
     if (!supabase) return;
@@ -352,6 +402,7 @@ export default function App() {
               enquiries={enquiries} 
               gallery={gallery}
               onAddVehicle={handleAddVehicle} 
+              onUpdateVehicle={handleUpdateVehicle}
               onDeleteVehicle={handleDeleteVehicle} 
               onAddGalleryItem={handleAddGalleryItem}
               onDeleteGalleryItem={handleDeleteGalleryItem}

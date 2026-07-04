@@ -55,17 +55,8 @@ export default function GalleryView({ galleryItems }: GalleryViewProps) {
               />
 
               {/* Overlay on hover */}
-              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-8 z-20">
-                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 space-y-2">
-                  <div className="flex items-center space-x-1 text-red-500 font-sans text-[10px] tracking-[0.15em] uppercase">
-                    <Sparkles className="h-3 w-3" />
-                    <span>PRIVATE COLLECTION</span>
-                  </div>
-                  <span className="inline-flex items-center space-x-1.5 text-[14px] text-red-500 hover:text-red-400 font-sans pt-1">
-                    <ZoomIn className="h-3.5 w-3.5" />
-                    <span>ENLARGE VISUAL</span>
-                  </span>
-                </div>
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center z-20">
+                  <ZoomIn className="h-10 w-10 text-white/70" />
               </div>
 
               {/* Gradient Bottom (Normal state) */}

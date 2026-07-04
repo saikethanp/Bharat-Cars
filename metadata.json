@@ -1,0 +1,6 @@
+{
+  "name": "Bharat Cars",
+  "description": "A premium, luxury car dealership web application showcasing elite masterworks, custom commissions, and a secure client concierge portal.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

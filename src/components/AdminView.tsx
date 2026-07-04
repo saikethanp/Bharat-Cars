@@ -30,7 +30,9 @@ import {
   Layers, 
   ExternalLink,
   Upload,
-  Pencil
+  Pencil,
+  ArrowUp,
+  ArrowDown
 } from 'lucide-react';
 import { Vehicle, Enquiry, GalleryItem } from '../types';
 
@@ -45,6 +47,7 @@ interface AdminViewProps {
   onDeleteVehicle: (id: string) => void;
   onAddGalleryItem: (galleryItem: Omit<GalleryItem, 'id' | 'created_at'>) => void;
   onDeleteGalleryItem: (id: string) => void;
+  onReorderGalleryItems: (items: GalleryItem[]) => void;
   onDeleteEnquiry: (id: string) => void;
   session?: any;
   userRole?: string;
@@ -61,6 +64,7 @@ export default function AdminView({
   onDeleteVehicle,
   onAddGalleryItem,
   onDeleteGalleryItem,
+  onReorderGalleryItems,
   onDeleteEnquiry,
   session,
   userRole
@@ -921,10 +925,42 @@ export default function AdminView({
                             referrerPolicy="no-referrer"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-between p-4">
-                            <div className="flex justify-end">
+                            <div className="flex justify-end space-x-2">
+                              {!searchQuery && (
+                                <>
+                                  <button
+                                    onClick={() => {
+                                      const originalIndex = gallery.findIndex(g => g.id === item.id);
+                                      if (originalIndex > 0) {
+                                        const newGallery = [...gallery];
+                                        [newGallery[originalIndex - 1], newGallery[originalIndex]] = [newGallery[originalIndex], newGallery[originalIndex - 1]];
+                                        onReorderGalleryItems(newGallery);
+                                      }
+                                    }}
+                                    className="p-2 bg-blue-500/20 text-blue-400 hover:text-white rounded transition-all cursor-pointer hover:bg-blue-600"
+                                    title="Move Up"
+                                  >
+                                    <ArrowUp className="h-4 w-4" />
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      const originalIndex = gallery.findIndex(g => g.id === item.id);
+                                      if (originalIndex !== -1 && originalIndex < gallery.length - 1) {
+                                        const newGallery = [...gallery];
+                                        [newGallery[originalIndex], newGallery[originalIndex + 1]] = [newGallery[originalIndex + 1], newGallery[originalIndex]];
+                                        onReorderGalleryItems(newGallery);
+                                      }
+                                    }}
+                                    className="p-2 bg-blue-500/20 text-blue-400 hover:text-white rounded transition-all cursor-pointer hover:bg-blue-600"
+                                    title="Move Down"
+                                  >
+                                    <ArrowDown className="h-4 w-4" />
+                                  </button>
+                                </>
+                              )}
                               <button
                                 onClick={() => onDeleteGalleryItem(item.id)}
-                                className="p-2 bg-rose-500 text-white rounded shadow-lg transition-all transform translate-y-[-10px] group-hover:translate-y-0 duration-300 cursor-pointer hover:bg-rose-600"
+                                className="p-2 bg-rose-500 text-white rounded shadow-lg transition-all cursor-pointer hover:bg-rose-600"
                                 id={`delete-gallery-btn-${item.id}`}
                                 title="Remove Gallery Image"
                               >

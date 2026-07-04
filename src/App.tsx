@@ -354,6 +354,23 @@ export default function App() {
     }
   };
 
+  const handleReorderGallery = async (reorderedItems: GalleryItem[]) => {
+    setGallery(reorderedItems);
+    if (!supabase) return;
+    
+    const now = Date.now();
+    const updates = reorderedItems.map((item, index) => {
+      const newDate = new Date(now - index * 1000).toISOString();
+      return supabase.from('gallery').update({ created_at: newDate }).eq('id', item.id);
+    });
+    
+    try {
+      await Promise.all(updates);
+    } catch (e) {
+      console.error("Failed to reorder gallery items", e);
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-transparent text-white" id="app-root">
       {/* Luxury Navigation Header */}
@@ -406,6 +423,7 @@ export default function App() {
               onDeleteVehicle={handleDeleteVehicle} 
               onAddGalleryItem={handleAddGalleryItem}
               onDeleteGalleryItem={handleDeleteGalleryItem}
+              onReorderGalleryItems={handleReorderGallery}
               onDeleteEnquiry={handleDeleteEnquiry}
               session={session}
               userRole={userRole}

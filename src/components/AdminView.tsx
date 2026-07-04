@@ -934,7 +934,6 @@ export default function AdminView({
                             
                             <div className="space-y-1">
                               <span className="text-[13px] font-sans font-medium tracking-[0.15em] text-red-500 uppercase tracking-[0.15em] block">GALLERY IMAGE</span>
-                              <p className="text-[14px] font-sans font-normal text-gray-200 line-clamp-2">{item.description}</p>
                             </div>
                           </div>
                           
@@ -1042,17 +1041,6 @@ export default function AdminView({
                       </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <label className="text-[13px] font-sans font-medium tracking-[0.15em] text-[#BDBDBD] uppercase tracking-[0.15em] block">Image Description</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Rolls Royce Phantom Rear Golden Hour Closeup"
-                        value={newGalleryItem.description}
-                        onChange={(e) => setNewGalleryItem({ ...newGalleryItem, description: e.target.value })}
-                        className="w-full bg-[#111111] border border-[#2A2A2A] rounded py-3 px-4 text-[16px] text-white placeholder-gray-600 focus:outline-none focus:border-red-500/50"
-                        id="gallery-form-desc"
-                      />
-                    </div>
 
                     {newGalleryItem.image_url && (
                       <div className="space-y-2" id="gallery-form-preview-wrapper">

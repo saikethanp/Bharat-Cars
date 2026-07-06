@@ -152,7 +152,7 @@ export default function HomeView({ vehicles, galleryItems, setView, setSelectedV
               >
                 <button
                   onClick={() => setView('inventory')}
-                  className="group flex items-center justify-center space-x-3 px-8 py-4 bg-[#050505] border border-red-500 text-white hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-[0_0_20px_rgba(200,16,46,0.5)] font-sans font-semibold text-[16px] rounded tracking-[0.15em] uppercase transition-all duration-300 w-full sm:w-[240px] whitespace-nowrap cursor-pointer"
+                  className="group flex items-center justify-center space-x-3 px-8 py-4 bg-[#050505] border border-red-500 text-white hover:bg-red-500 hover:text-white hover:border-red-400 hover:shadow-[0_0_20px_rgba(200,16,46,0.5)] font-sans font-semibold text-[16px] rounded-full tracking-[0.15em] uppercase transition-all duration-300 w-full sm:w-[240px] whitespace-nowrap cursor-pointer"
                   id="hero-btn-inventory"
                 >
                   <span>Explore Cars</span>
@@ -160,7 +160,7 @@ export default function HomeView({ vehicles, galleryItems, setView, setSelectedV
                 </button>
                 <button
                   onClick={() => setView('contact')}
-                  className="group flex items-center justify-center space-x-3 px-8 py-4 bg-transparent hover:bg-white text-white hover:text-black border border-white hover:border-white hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] font-sans font-semibold text-[16px] rounded tracking-[0.15em] uppercase transition-all duration-300 backdrop-blur-md w-full sm:w-[240px] whitespace-nowrap cursor-pointer"
+                  className="group flex items-center justify-center space-x-3 px-8 py-4 bg-transparent hover:bg-white text-white hover:text-black border border-white hover:border-white hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] font-sans font-semibold text-[16px] rounded-full tracking-[0.15em] uppercase transition-all duration-300 backdrop-blur-md w-full sm:w-[240px] whitespace-nowrap cursor-pointer"
                   id="hero-btn-contact"
                 >
                   <span>Get Directions</span>

@@ -177,10 +177,8 @@ export default function HomeView({ vehicles, galleryItems, setView, setSelectedV
               className="flex items-center justify-center md:justify-end"
               id="hero-right-logo"
             >
-              <div className="relative w-[270px] h-[270px] sm:w-[410px] sm:h-[410px] md:w-[500px] md:h-[500px] flex items-center justify-center group transition-all duration-700 animate-[float_6s_ease-in-out_infinite]">
-                {/* Radial red background glow behind the logo */}
-                <div className="absolute w-full h-full bg-[#C8102E]/20 blur-[100px] rounded-full group-hover:bg-[#C8102E]/30 transition-all duration-700"></div>
-                
+              <div className="relative w-[270px] h-[270px] sm:w-[410px] sm:h-[410px] md:w-[500px] md:h-[500px] flex items-center justify-center group transition-all duration-700">
+                {/* Logo Image */}
                 <img 
                   src={settings.logoUrl} 
                   onError={(e) => {
@@ -229,25 +227,7 @@ export default function HomeView({ vehicles, galleryItems, setView, setSelectedV
               ))}
             </div>
 
-            {/* Interactive Slide Left & Right Buttons */}
-            <div className="flex items-center space-x-2" id="slide-buttons-group">
-              <button 
-                onClick={() => scroll('left')}
-                className="p-2.5 bg-[#111111] hover:bg-red-500 text-red-500 hover:text-black border border-[#2A2A2A] hover:border-transparent rounded transition-all duration-300 cursor-pointer"
-                id="slide-left-btn"
-                aria-label="Slide Left"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-              <button 
-                onClick={() => scroll('right')}
-                className="p-2.5 bg-[#111111] hover:bg-red-500 text-red-500 hover:text-black border border-[#2A2A2A] hover:border-transparent rounded transition-all duration-300 cursor-pointer"
-                id="slide-right-btn"
-                aria-label="Slide Right"
-              >
-                <ChevronRight className="h-5 w-5" />
-              </button>
-            </div>
+            {/* Slide Buttons Removed as per request */}
 
             <button 
               onClick={() => setView('inventory')}
@@ -285,7 +265,15 @@ export default function HomeView({ vehicles, galleryItems, setView, setSelectedV
             id="featured-car-carousel"
             style={{ WebkitOverflowScrolling: 'touch' }}
           >
-            {filteredVehicles.map((vehicle, idx) => (
+            {filteredVehicles.length === 0 ? (
+              <div className="w-full flex items-center justify-center py-20 min-w-full">
+                <div className="text-center space-y-4">
+                  <p className="text-xl font-serif text-white">No cars found in this price range.</p>
+                  <button onClick={() => setPriceFilter('Any Price')} className="text-red-500 hover:text-red-400 font-sans text-sm underline tracking-wider uppercase cursor-pointer">View all cars</button>
+                </div>
+              </div>
+            ) : (
+            filteredVehicles.map((vehicle, idx) => (
               <motion.div
                 key={vehicle.id}
                 initial={{ opacity: 0, y: 30 }}
@@ -360,7 +348,7 @@ export default function HomeView({ vehicles, galleryItems, setView, setSelectedV
                   </div>
                 </div>
               </motion.div>
-            ))}
+            )))}
           </div>
         </div>
       </div>

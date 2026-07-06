@@ -16,6 +16,7 @@ import { useSiteSettings } from './lib/SiteSettingsContext';
 export default function App() {
   const [currentView, setView] = useState<string>('home');
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>('');
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   // Primary states
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -175,6 +176,18 @@ export default function App() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentView, selectedVehicleId]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 400) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Enquiry adder callback
   const handleAddEnquiry = async (newEnq: Omit<Enquiry, 'id' | 'created_at' | 'status'>) => {
@@ -434,6 +447,20 @@ export default function App() {
 
       {/* Luxury Footer */}
       <Footer setView={setView} />
+      
+      {/* Scroll to Top Button */}
+      {showScrollTop && (
+        <button
+          onClick={() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (currentView !== 'home') setView('home');
+          }}
+          className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 p-3 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-[0_0_15px_rgba(200,16,46,0.5)] transition-all z-50 flex items-center justify-center cursor-pointer animate-[fade-in_0.3s_ease-out]"
+          aria-label="Back to top"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+      )}
     </div>
   );
 }

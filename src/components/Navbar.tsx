@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { Car, Menu, X, Shield, Image, PhoneCall, Home, Grid } from 'lucide-react';
+import { Car, Menu, X, Shield, Image, PhoneCall, Home, Grid, Download } from 'lucide-react';
 import { useSiteSettings } from '../lib/SiteSettingsContext';
 
 interface NavbarProps {
@@ -68,6 +68,16 @@ export default function Navbar({ currentView, setView }: NavbarProps) {
                 </button>
               );
             })}
+            {/* Download App Button */}
+            <a
+              href="/bharat-cars-app.apk"
+              download
+              className="group flex items-center space-x-2 px-4 py-2 ml-2 rounded-lg text-[17px] font-sans font-medium tracking-[0.02em] transition-all duration-300 text-white bg-gradient-to-r from-red-600 to-red-800 hover:from-red-500 hover:to-red-700 border border-red-500/50 shadow-lg shadow-red-500/20"
+              id="nav-link-download-app"
+            >
+              <Download className="h-4 w-4 text-white" />
+              <span>Get App</span>
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
@@ -109,6 +119,17 @@ export default function Navbar({ currentView, setView }: NavbarProps) {
               </button>
             );
           })}
+          {/* Mobile Download App Button */}
+          <a
+            href="/bharat-cars-app.apk"
+            download
+            className="flex items-center space-x-3 w-full px-4 py-3 mt-4 rounded-lg text-[17px] font-sans font-medium tracking-[0.02em] transition-all text-white bg-gradient-to-r from-red-600 to-red-800 border-l-4 border-red-500"
+            onClick={() => setIsOpen(false)}
+            id="nav-mobile-link-download-app"
+          >
+            <Download className="h-5 w-5 text-white" />
+            <span>Download Android App</span>
+          </a>
         </div>
       )}
     </nav>

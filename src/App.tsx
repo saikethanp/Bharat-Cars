@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import HomeView from './components/HomeView';
-import InventoryView from './components/InventoryView';
-import VehicleDetailsView from './components/VehicleDetailsView';
-import GalleryView from './components/GalleryView';
-import ContactView from './components/ContactView';
-import AdminView from './components/AdminView';
+import { SplashScreen } from '@capacitor/splash-screen';
+import { Capacitor } from '@capacitor/core';
+
+const HomeView = lazy(() => import('./components/HomeView'));
+const InventoryView = lazy(() => import('./components/InventoryView'));
+const VehicleDetailsView = lazy(() => import('./components/VehicleDetailsView'));
+const GalleryView = lazy(() => import('./components/GalleryView'));
+const ContactView = lazy(() => import('./components/ContactView'));
+const AdminView = lazy(() => import('./components/AdminView'));
 import AdminGuard from './components/AdminGuard';
 
 import { Vehicle, GalleryItem, Enquiry } from './types';
@@ -36,6 +39,23 @@ export default function App() {
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
       metaDesc.setAttribute('content', settings.seoDescription || '');
+    }
+    
+    // Hide native splash screen if running in Capacitor
+    if (Capacitor.isNativePlatform()) {
+      SplashScreen.hide().catch(console.error);
+    }
+    
+    // Hide our custom web loader with a smooth fade
+    const loader = document.getElementById('initial-loader');
+    if (loader) {
+      // Small delay to ensure React has fully painted
+      setTimeout(() => {
+        loader.classList.add('loader-hidden');
+        setTimeout(() => {
+          loader.style.display = 'none';
+        }, 800); // Wait for transition to complete
+      }, 100);
     }
   }, [settings.seoTitle, settings.seoDescription]);
 
@@ -391,58 +411,64 @@ export default function App() {
 
       {/* Main Multi-Screen Content Frame */}
       <main className="flex-grow" id="app-main">
-        {currentView === 'home' && (
-          <HomeView 
-            vehicles={vehicles} 
-            galleryItems={gallery}
-            setView={setView} 
-            setSelectedVehicleId={setSelectedVehicleId} 
-            onAddEnquiry={handleAddEnquiry}
-          />
-        )}
-        {currentView === 'inventory' && (
-          <InventoryView 
-            vehicles={vehicles} 
-            setView={setView} 
-            setSelectedVehicleId={setSelectedVehicleId} 
-          />
-        )}
-        {currentView === 'vehicle-details' && (
-          <VehicleDetailsView 
-            vehicleId={selectedVehicleId} 
-            vehicles={vehicles} 
-            setView={setView} 
-            onAddEnquiry={handleAddEnquiry} 
-          />
-        )}
-        {currentView === 'gallery' && (
-          <GalleryView 
-            galleryItems={gallery} 
-          />
-        )}
-        {currentView === 'contact' && (
-          <ContactView 
-            onAddEnquiry={handleAddEnquiry} 
-          />
-        )}
-        {currentView === 'admin' && (
-          <AdminGuard session={session} userRole={userRole} isRoleLoading={isRoleLoading}>
-            <AdminView 
+        <Suspense fallback={
+          <div className="flex items-center justify-center min-h-[60vh]">
+            <div className="w-12 h-12 border-2 border-white/10 border-t-red-500 rounded-full animate-spin"></div>
+          </div>
+        }>
+          {currentView === 'home' && (
+            <HomeView 
               vehicles={vehicles} 
-              enquiries={enquiries} 
-              gallery={gallery}
-              onAddVehicle={handleAddVehicle} 
-              onUpdateVehicle={handleUpdateVehicle}
-              onDeleteVehicle={handleDeleteVehicle} 
-              onAddGalleryItem={handleAddGalleryItem}
-              onDeleteGalleryItem={handleDeleteGalleryItem}
-              onReorderGalleryItems={handleReorderGallery}
-              onDeleteEnquiry={handleDeleteEnquiry}
-              session={session}
-              userRole={userRole}
+              galleryItems={gallery}
+              setView={setView} 
+              setSelectedVehicleId={setSelectedVehicleId} 
+              onAddEnquiry={handleAddEnquiry}
             />
-          </AdminGuard>
-        )}
+          )}
+          {currentView === 'inventory' && (
+            <InventoryView 
+              vehicles={vehicles} 
+              setView={setView} 
+              setSelectedVehicleId={setSelectedVehicleId} 
+            />
+          )}
+          {currentView === 'vehicle-details' && (
+            <VehicleDetailsView 
+              vehicleId={selectedVehicleId} 
+              vehicles={vehicles} 
+              setView={setView} 
+              onAddEnquiry={handleAddEnquiry} 
+            />
+          )}
+          {currentView === 'gallery' && (
+            <GalleryView 
+              galleryItems={gallery} 
+            />
+          )}
+          {currentView === 'contact' && (
+            <ContactView 
+              onAddEnquiry={handleAddEnquiry} 
+            />
+          )}
+          {currentView === 'admin' && (
+            <AdminGuard session={session} userRole={userRole} isRoleLoading={isRoleLoading}>
+              <AdminView 
+                vehicles={vehicles} 
+                enquiries={enquiries} 
+                gallery={gallery}
+                onAddVehicle={handleAddVehicle} 
+                onUpdateVehicle={handleUpdateVehicle}
+                onDeleteVehicle={handleDeleteVehicle} 
+                onAddGalleryItem={handleAddGalleryItem}
+                onDeleteGalleryItem={handleDeleteGalleryItem}
+                onReorderGalleryItems={handleReorderGallery}
+                onDeleteEnquiry={handleDeleteEnquiry}
+                session={session}
+                userRole={userRole}
+              />
+            </AdminGuard>
+          )}
+        </Suspense>
       </main>
 
       {/* Luxury Footer */}
